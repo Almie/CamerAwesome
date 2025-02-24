@@ -35,30 +35,30 @@ class Preview {
   /// according to the current preview size and the image size
   /// also in case of Android, it will flip the point if required
   Offset convertFromImage(
-    Offset point,
-    AnalysisImage img, {
-    bool? flipXY,
-  }) {
+      Offset point,
+      AnalysisImage img, {
+        bool? flipXY,
+      }) {
     num imageStretchX;
     num imageStretchY;
     num imgToNativeScaleX;
     num imgToNativeScaleY;
     final shouldflipXY = flipXY ?? img.flipXY();
     if (Platform.isIOS) {
-      imageStretchX = img.size.width / img.croppedSize.width;
-      imageStretchY = img.size.height / img.croppedSize.height;
+      imageStretchX = img.croppedSize.width;
+      imageStretchY = img.croppedSize.height;
       imgToNativeScaleX = nativePreviewSize.width / img.croppedSize.width;
       imgToNativeScaleY = nativePreviewSize.height / img.croppedSize.height;
     } else {
       // Width and height are inverted on Android
-      imageStretchX = img.size.height / img.croppedSize.width;
-      imageStretchY = img.size.width / img.croppedSize.height;
+      imageStretchX = img.croppedSize.width;
+      imageStretchY = img.croppedSize.height;
       imgToNativeScaleX = nativePreviewSize.width / img.croppedSize.width;
       imgToNativeScaleY = nativePreviewSize.height / img.croppedSize.height;
     }
     var offset = Offset(
-      (shouldflipXY ? point.dy : point.dx).toDouble() / imageStretchX,
-      (shouldflipXY ? point.dx : point.dy).toDouble() / imageStretchY,
+      (shouldflipXY ? point.dy : point.dx).toDouble() * imageStretchX,
+      (shouldflipXY ? point.dx : point.dy).toDouble() * imageStretchY,
     )
         .scale(imgToNativeScaleX * scale, imgToNativeScaleY * scale)
         .translate(this.offset.dx, this.offset.dy);
